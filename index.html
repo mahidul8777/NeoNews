@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NeoNews - Real-Time AI News</title>
+  <style>
+    * {margin: 0; padding: 0; box-sizing: border-box;}
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #0f172a;
+      color: white;
+    }
+    header {
+      background: linear-gradient(90deg, #0ea5e9, #9333ea);
+      padding: 20px;
+      text-align: center;
+      font-size: 2em;
+      font-weight: bold;
+    }
+    #news-container {
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .news-card {
+      background: #1e293b;
+      padding: 15px;
+      border-radius: 15px;
+      box-shadow: 0 0 15px rgba(14,165,233,0.3);
+      transition: transform 0.3s ease;
+    }
+    .news-card:hover {
+      transform: scale(1.02);
+      box-shadow: 0 0 30px rgba(147,51,234,0.5);
+    }
+    .news-title {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+      color: #38bdf8;
+    }
+    .news-desc {
+      color: #cbd5e1;
+    }
+    .news-footer {
+      margin-top: 10px;
+      font-size: 0.8em;
+      color: #94a3b8;
+    }
+    .loader {
+      text-align: center;
+      padding: 50px;
+      font-size: 1.5em;
+      color: #38bdf8;
+    }
+  </style>
+</head>
+<body>
+
+  <header>NeoNews - Real-Time AI News</header>
+  <div class="loader" id="loader">Loading latest news...</div>
+  <div id="news-container"></div>
+
+  <script>
+    const container = document.getElementById('news-container');
+    const loader = document.getElementById('loader');
+
+    const apiKey = 'd01b95d1faea482ca3417acbe09878ec';
+    const apiURL = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${apiKey}`;
+
+    async function fetchNews() {
+      try {
+        const res = await fetch(apiURL);
+        const json = await res.json();
+        const articles = json.articles;
+
+        loader.style.display = 'none';
+
+        articles.forEach(article => {
+          const card = document.createElement('div');
+          card.className = 'news-card';
+          card.innerHTML = `
+            <div class="news-title">${article.title}</div>
+            <div class="news-desc">${article.description || "No description available."}</div>
+            <div class="news-footer">${article.source.name} | ${new Date(article.publishedAt).toLocaleString()}</div>
+          `;
+          container.appendChild(card);
+        });
+      } catch (err) {
+        loader.textContent = "Failed to load news.";
+        console.error(err);
+      }
+    }
+
+    fetchNews();
+  </script>
+</body>
+</html>
